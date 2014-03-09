@@ -68,10 +68,14 @@ class CronCreateCommand {
 
     $job['enabled'] = drush_confirm(dt('Should the cron be enabled?'));
 
-    drupal_write_record('cron_job', $job);
-
     drush_print('');
-    drush_log(dt('Cron "!name" was created successfully!', array('!name' => $job['name'])), 'ok');
+    if ($job_entity = entity_create('cron_job', $job)) {
+      $job_entity->save();
+      drush_log(dt('Cron "!name" was created successfully!', array('!name' => $job['name'])), 'ok');
+    }
+    else {
+      drush_set_error('cron', dt('Something went wrong, please contact the website administrator.'));
+    }
   }
 
   /**
