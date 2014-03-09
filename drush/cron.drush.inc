@@ -14,6 +14,9 @@ function cron_drush_command() {
   $list_command = new Drupal\cron\Command\CronListCommand();
   $list_command->configure($items);
 
+  $create_command = new Drupal\cron\Command\CronCreateCommand();
+  $create_command->configure($items);
+
   return $items;
 }
 
@@ -22,5 +25,13 @@ function cron_drush_command() {
  */
 function cron_drush_list() {
   $command = new Drupal\cron\Command\CronListCommand();
+  $command->execute();
+}
+
+/**
+ * Cron create command callback.
+ */
+function cron_drush_create() {
+  $command = new Drupal\cron\Command\CronCreateCommand();
   $command->execute();
 }
