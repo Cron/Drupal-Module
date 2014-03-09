@@ -1,0 +1,6 @@
+name: Cron
+description: 'Module for fine-grained Cron control.'
+package: Cron
+type: module
+version: 1.0
+core: 8.x
