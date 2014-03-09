@@ -31,9 +31,9 @@ class CronListCommand {
   public function execute() {
     $jobs = $this->queryJobs();
 
-    while ($job = $jobs->fetchAssoc()) {
-      $state = $job['enabled'] ? 'x' : ' ';
-      drush_print(dt('[!enabled] !name', array('!enabled' => $state, '!name' => $job['name'])), 1);
+    foreach ($jobs as $job) {
+      $state = $job->getEnabled() ? 'x' : ' ';
+      drush_print(dt('[!enabled] !name', array('!enabled' => $state, '!name' => $job->getName())), 1);
     }
   }
 
@@ -41,11 +41,10 @@ class CronListCommand {
    * Get list of cron jobs ordered by name.
    */
   private function queryJobs() {
-    $jobs = db_select('cron_job','cj')
-      ->fields('cj')
-      ->orderBy('cj.name', 'ASC')
+    $jobs = \Drupal::entityQuery('cron_job')
+      ->sort('name', 'ASC')
       ->execute();
 
-    return $jobs;
+    return entity_load_multiple('cron_job', $jobs);
   }
 }

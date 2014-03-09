@@ -20,6 +20,12 @@ function cron_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'uuid' => array(
+        'description' => 'Unique Key: Universally unique identifier for this entity.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+      ),
       'name' => array(
         'description' => 'The name of the cron job.',
         'type' => 'varchar',
