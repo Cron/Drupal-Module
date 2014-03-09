@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the cron module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * @return array mixed
+ */
+function cron_schema() {
+  $schema['cron_job'] = array(
+    'description' => 'The base table for cron jobs.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for the cron job.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The name of the cron job.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'command' => array(
+        'description' => 'The command the cron job has to execute.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'schedule' => array(
+        'description' => 'The schedule when the cron job has to be executed.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'description' => array(
+        'description' => 'The description of the cron job.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'enabled' => array(
+        'description' => 'Status of the cron job.',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'report' => array(
+        'description' => 'ID of the cron report.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'unique keys' => array(
+      'un_name' => array('name'),
+    ),
+    'foreign keys' => array(
+      'cron_report' => array(
+        'table' => 'cron_report',
+        'columns' => array('report' => 'id'),
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  $schema['cron_report'] = array(
+    'description' => 'The base table for cron reports.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for the cron report.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'run_at' => array(
+        'description' => 'Datetime when the cron job was run.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'run_time' => array(
+        'description' => 'The amount of time the cron job has run.',
+        'type' => 'float',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'exit_code' => array(
+        'description' => 'The exit code of the cron job.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'output' => array(
+        'description' => 'The output of the cron job.',
+        'type' => 'text',
+        'not null' => TRUE,
+      ),
+      'job' => array(
+        'description' => 'The cron job this report belongs to.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'foreign keys' => array(
+      'cron_job' => array(
+        'table' => 'cron_job',
+        'columns' => array('job' => 'id'),
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
