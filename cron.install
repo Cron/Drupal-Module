@@ -55,23 +55,11 @@ function cron_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'report' => array(
-        'description' => 'ID of the cron report.',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
     ),
     'unique keys' => array(
       'un_name' => array('name'),
     ),
-    'foreign keys' => array(
-      'cron_report' => array(
-        'table' => 'cron_report',
-        'columns' => array('report' => 'id'),
-      ),
-    ),
+    'foreign keys' => array(),
     'primary key' => array('id'),
   );
 
