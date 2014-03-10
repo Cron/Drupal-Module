@@ -17,8 +17,11 @@ function cron_drush_command() {
   $create_command = new Drupal\cron\Command\CronCreateCommand();
   $create_command->configure($items);
 
-  $create_command = new Drupal\cron\Command\CronEnableCommand();
-  $create_command->configure($items);
+  $enable_command = new Drupal\cron\Command\CronEnableCommand();
+  $enable_command->configure($items);
+
+  $disable_command = new Drupal\cron\Command\CronDisableCommand();
+  $disable_command->configure($items);
 
   return $items;
 }
@@ -44,5 +47,13 @@ function cron_drush_create() {
  */
 function cron_drush_enable($job) {
   $command = new Drupal\cron\Command\CronEnableCommand();
+  $command->execute($job);
+}
+
+/**
+ * Cron disable command callback.
+ */
+function cron_drush_disable($job) {
+  $command = new Drupal\cron\Command\CronDisableCommand();
   $command->execute($job);
 }
