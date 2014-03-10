@@ -11,7 +11,7 @@ namespace Drupal\cron\Command;
  * Class CronListCommand
  * @package Drupal\cron\Command
  */
-class CronListCommand {
+class CronListCommand extends CronCommandBase {
 
   /**
    * Expose command properties to drush.
@@ -45,6 +45,7 @@ class CronListCommand {
       ->sort('name', 'ASC')
       ->execute();
 
-    return entity_load_multiple('cron_job', $jobs);
+    return $this->container()->get('cron_job_manager')
+      ->loadMultiple($jobs);
   }
 }

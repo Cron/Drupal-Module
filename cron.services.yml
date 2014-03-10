@@ -1,0 +1,3 @@
+services:
+  cron_job_manager:
+    class: Drupal\cron\Manager\CronJobManager

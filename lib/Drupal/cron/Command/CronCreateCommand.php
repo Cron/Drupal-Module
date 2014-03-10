@@ -11,7 +11,7 @@ namespace Drupal\cron\Command;
  * Class CronCreateCommand
  * @package Drupal\cron\Command
  */
-class CronCreateCommand {
+class CronCreateCommand extends CronCommandBase {
 
   /**
    * Expose command properties to drush.
@@ -20,7 +20,7 @@ class CronCreateCommand {
    */
   public function configure(&$items) {
     $items['cron:create'] = array(
-      'description' => 'Create a cron job.',
+      'description' => dt('Create a cron job.'),
       'callback' => 'cron_drush_create',
     );
   }
@@ -131,9 +131,7 @@ class CronCreateCommand {
    * @return mixed
    */
   protected function queryJobExists($name) {
-    return \Drupal::entityQuery('cron_job')
-      ->condition('name', $name, '=')
-      ->count()
-      ->execute();
+    return $this->container()->get('cron_job_manager')
+      ->loadByName($name);
   }
 }
