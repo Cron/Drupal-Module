@@ -131,6 +131,9 @@ class CronCreateCommand {
    * @return mixed
    */
   protected function queryJobExists($name) {
-    return db_query('SELECT 1 FROM {cron_job} WHERE name = :name', array(':name' => $name))->fetchField();
+    return \Drupal::entityQuery('cron_job')
+      ->condition('name', $name, '=')
+      ->count()
+      ->execute();
   }
 }
