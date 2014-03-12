@@ -23,6 +23,9 @@ function cron_drush_command() {
   $disable_command = new Drupal\cron\Command\CronDisableCommand();
   $disable_command->configure($items);
 
+  $delete_command = new Drupal\cron\Command\CronDeleteCommand();
+  $delete_command->configure($items);
+
   return $items;
 }
 
@@ -55,5 +58,13 @@ function cron_drush_enable($job) {
  */
 function cron_drush_disable($job) {
   $command = new Drupal\cron\Command\CronDisableCommand();
+  $command->execute($job);
+}
+
+/**
+ * Cron delete command callback.
+ */
+function cron_drush_delete($job) {
+  $command = new Drupal\cron\Command\CronDeleteCommand();
   $command->execute($job);
 }
