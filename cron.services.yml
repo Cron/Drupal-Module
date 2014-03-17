@@ -1,3 +1,14 @@
 services:
   cron_job_manager:
     class: Drupal\cron\Manager\CronJobManager
+
+  cron_list_command:
+    class: Drupal\cron\Command\CronListCommand
+  cron_create_command:
+    class: Drupal\cron\Command\CronCreateCommand
+  cron_enable_command:
+    class: Drupal\cron\Command\CronEnableCommand
+  cron_disable_command:
+    class: Drupal\cron\Command\CronDisableCommand
+  cron_delete_command:
+    class: Drupal\cron\Command\CronDeleteCommand

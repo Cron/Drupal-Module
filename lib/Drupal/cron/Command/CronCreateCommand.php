@@ -128,10 +128,10 @@ class CronCreateCommand extends CronCommandBase {
    *
    * @param string $name
    *
-   * @return mixed
+   * @return \Drupal\cron\Entity\CronJob
    */
   protected function queryJobExists($name) {
-    return $this->container()->get('cron_job_manager')
+    return \Drupal::service('cron_job_manager')
       ->loadByName($name);
   }
 }
