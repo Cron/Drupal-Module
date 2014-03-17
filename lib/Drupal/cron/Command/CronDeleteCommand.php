@@ -59,10 +59,10 @@ class CronDeleteCommand extends CronCommandBase {
    *
    * @param string $name
    *
-   * @return array
+   * @return \Drupal\cron\Entity\CronJob
    */
   protected function queryJob($name) {
-    return $this->container()->get('cron_job_manager')
+    return \Drupal::service('cron_job_manager')
       ->loadByName($name);
   }
 }

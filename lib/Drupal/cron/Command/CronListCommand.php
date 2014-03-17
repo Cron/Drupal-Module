@@ -39,13 +39,15 @@ class CronListCommand extends CronCommandBase {
 
   /**
    * Get list of cron jobs ordered by name.
+   *
+   * @return \Drupal\cron\Entity\CronJob[]
    */
   private function queryJobs() {
     $jobs = \Drupal::entityQuery('cron_job')
       ->sort('name', 'ASC')
       ->execute();
 
-    return $this->container()->get('cron_job_manager')
+    return \Drupal::service('cron_job_manager')
       ->loadMultiple($jobs);
   }
 }
