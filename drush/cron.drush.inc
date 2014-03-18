@@ -17,6 +17,9 @@ function cron_drush_command() {
   \Drupal::service('cron_disable_command')->configure($items);
   \Drupal::service('cron_delete_command')->configure($items);
 
+  $run_command = new Drupal\cron\Command\CronRunCommand();
+  $run_command->configure($items);
+
   return $items;
 }
 
@@ -53,4 +56,12 @@ function cron_drush_disable($job) {
  */
 function cron_drush_delete($job) {
   \Drupal::service('cron_delete_command')->execute($job);
+}
+
+/**
+ * Cron run command callback.
+ */
+function cron_drush_run($job = NULL) {
+  $command = new Drupal\cron\Command\CronRunCommand();
+  $command->execute($job);
 }
