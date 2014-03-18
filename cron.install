@@ -78,6 +78,12 @@ function cron_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'uuid' => array(
+        'description' => 'Unique Key: Universally unique identifier for this entity.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+      ),
       'run_at' => array(
         'description' => 'Datetime when the cron job was run.',
         'type' => 'int',
