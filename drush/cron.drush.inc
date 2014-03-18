@@ -11,20 +11,11 @@
 function cron_drush_command() {
   $items = array();
 
-  $list_command = new Drupal\cron\Command\CronListCommand();
-  $list_command->configure($items);
-
-  $create_command = new Drupal\cron\Command\CronCreateCommand();
-  $create_command->configure($items);
-
-  $enable_command = new Drupal\cron\Command\CronEnableCommand();
-  $enable_command->configure($items);
-
-  $disable_command = new Drupal\cron\Command\CronDisableCommand();
-  $disable_command->configure($items);
-
-  $delete_command = new Drupal\cron\Command\CronDeleteCommand();
-  $delete_command->configure($items);
+  \Drupal::service('cron_list_command')->configure($items);
+  \Drupal::service('cron_create_command')->configure($items);
+  \Drupal::service('cron_enable_command')->configure($items);
+  \Drupal::service('cron_disable_command')->configure($items);
+  \Drupal::service('cron_delete_command')->configure($items);
 
   $run_command = new Drupal\cron\Command\CronRunCommand();
   $run_command->configure($items);
@@ -36,40 +27,35 @@ function cron_drush_command() {
  * Cron list command callback.
  */
 function cron_drush_list() {
-  $command = new Drupal\cron\Command\CronListCommand();
-  $command->execute();
+  \Drupal::service('cron_list_command')->execute();
 }
 
 /**
  * Cron create command callback.
  */
 function cron_drush_create() {
-  $command = new Drupal\cron\Command\CronCreateCommand();
-  $command->execute();
+  \Drupal::service('cron_create_command')->execute();
 }
 
 /**
  * Cron enable command callback.
  */
 function cron_drush_enable($job) {
-  $command = new Drupal\cron\Command\CronEnableCommand();
-  $command->execute($job);
+  \Drupal::service('cron_enable_command')->execute($job);
 }
 
 /**
  * Cron disable command callback.
  */
 function cron_drush_disable($job) {
-  $command = new Drupal\cron\Command\CronDisableCommand();
-  $command->execute($job);
+  \Drupal::service('cron_disable_command')->execute($job);
 }
 
 /**
  * Cron delete command callback.
  */
 function cron_drush_delete($job) {
-  $command = new Drupal\cron\Command\CronDeleteCommand();
-  $command->execute($job);
+  \Drupal::service('cron_delete_command')->execute($job);
 }
 
 /**
