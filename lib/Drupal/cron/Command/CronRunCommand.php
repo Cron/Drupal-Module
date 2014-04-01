@@ -49,7 +49,7 @@ class CronRunCommand extends CronCommandBase {
     $cron->setExecutor(new Executor());
 
     if (is_null($job)) {
-      $resolver = $this->container()->get('cron_job_resolver');
+      $resolver = \Drupal::service('cron_job_resolver');
     }
     else {
       $resolver = $this->getJobResolver($job, $force);
@@ -104,7 +104,7 @@ class CronRunCommand extends CronCommandBase {
    * @return \Drupal\cron\Entity\CronJob
    */
   protected function queryJob($name) {
-    return $this->container()->get('cron_job_manager')
+    return \Drupal::service('cron_job_manager')
       ->loadByName($name);
   }
 }
