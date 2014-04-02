@@ -1,8 +1,8 @@
 services:
   cron_job_manager:
     class: Drupal\cron\Manager\CronJobManager
-  cron_job_resolver:
-    class: Drupal\cron\Resolver\CronJobResolver  
+  cron_shell_resolver:
+    class: Drupal\cron\Resolver\ShellResolver
 
   cron_list_command:
     class: Drupal\cron\Command\CronListCommand

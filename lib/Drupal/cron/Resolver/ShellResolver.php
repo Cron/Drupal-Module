@@ -9,29 +9,36 @@ namespace Drupal\cron\Resolver;
 
 use Cron\Job\JobInterface;
 use Cron\Job\ShellJob;
+use Cron\Resolver\ArrayResolver;
 use Cron\Resolver\ResolverInterface;
 use Cron\Schedule\CrontabSchedule;
 use Drupal\cron\Entity\CronJob;
-use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
- * Class CronJobResolver
+ * Class ShellResolver
  * @package Drupal\cron\Resolver
  */
-class CronJobResolver implements ResolverInterface {
+class ShellResolver implements ResolverInterface {
   /**
    * @var \Drupal\cron\Manager\CronJobManager
    */
   protected $manager;
 
   /**
-   * @var string
+   * @var \Drupal\cron\Entity\CronJob
    */
-  protected $phpExecutable;
+  protected $job = NULL;
 
+  /**
+   * @var bool
+   */
+  protected $force = FALSE;
+
+  /**
+   * Constructor.
+   */
   public function __construct() {
-    $finder = new PhpExecutableFinder();
-    $this->phpExecutable = $finder->find();
+    $this->manager = \Drupal::service('cron_job_manager');
   }
 
   /**
@@ -42,12 +49,47 @@ class CronJobResolver implements ResolverInterface {
   }
 
   /**
+   * @param \Drupal\cron\Entity\CronJob $job
+   */
+  public function setJob($job) {
+    $this->job = $job;
+  }
+
+  /**
+   * @return \Drupal\cron\Entity\CronJob
+   */
+  public function getJob() {
+    return $this->job;
+  }
+
+  /**
+   * @param boolean $force
+   */
+  public function setForce($force) {
+    $this->force = $force;
+  }
+
+  /**
+   * @return boolean
+   */
+  public function getForce() {
+    return $this->force;
+  }
+
+  /**
    * Return all available jobs.
    *
    * @return JobInterface[]
    */
   public function resolve() {
-    $jobs = $this->manager->loadEnabledJobs();
+    $jobs = array();
+
+    if (!is_null($this->getJob()) && ($this->getJob()->getEnabled() || $this->getForce())) {
+      $jobs[$this->getJob()->getId()] = $this->getJob();
+    }
+    else {
+      $jobs = $this->manager->loadEnabledJobs();
+    }
 
     return array_map(array($this, 'createJob'), $jobs);
   }
@@ -60,7 +102,7 @@ class CronJobResolver implements ResolverInterface {
    */
   protected function createJob(CronJob $db_job) {
     $job = new ShellJob();
-    $job->setCommand($this->phpExecutable . ' app/console ' . $db_job->getCommand(), dirname(DRUPAL_ROOT));
+    $job->setCommand($db_job->getCommand(), dirname(DRUPAL_ROOT));
     $job->setSchedule(new CrontabSchedule($db_job->getSchedule()));
     $job->raw = $db_job;
 
