@@ -1,0 +1,7 @@
+cron.main:
+  path: '/admin/config/system/cron'
+  defaults:
+    _content: '\Drupal\cron\Controller\CronController::cronMain'
+    _title: 'Cron jobs'
+  requirements:
+    _permission: 'access administration pages'
