@@ -33,6 +33,13 @@ function cron_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+      'type' => array(
+        'description' => 'The type of the cron job.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
       'command' => array(
         'description' => 'The command the cron job has to execute.',
         'type' => 'varchar',

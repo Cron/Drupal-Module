@@ -60,6 +60,20 @@ class CronJob extends ContentEntityBase {
   }
 
   /**
+   * @param string $type
+   */
+  public function setType($type) {
+    $this->get('type')->value = $type;
+  }
+
+  /**
+   * @return string
+   */
+  public function getType() {
+    return $this->get('type')->value;
+  }
+
+  /**
    * @param string $command
    */
   public function setCommand($command) {
@@ -148,6 +162,12 @@ class CronJob extends ContentEntityBase {
     $fields['name'] = FieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the CronJob.'))
+      ->setSetting('default_value', '');
+
+    //TODO: property constraints.
+    $fields['type'] = FieldDefinition::create('string')
+      ->setLabel(t('Type'))
+      ->setDescription(t('The type of the CronJob.'))
       ->setSetting('default_value', '');
 
     //TODO: property constraints.

@@ -42,6 +42,16 @@ class CronCreateCommand extends CronCommandBase {
     $job['name'] = $name;
     drush_log('', 'ok');
 
+    drush_print(dt('The type of the job (can only be set to "shell" or "drush" at this time.'));
+    $type = drush_prompt(dt('Type'));
+    while (!$this->validateType($type)) {
+      drush_print('');
+      drush_set_error('cron', dt('The type you chose was invalid, please try another one.'));
+      $type = drush_prompt(dt('Type'));
+    }
+    $job['type'] = $type;
+    drush_log('', 'ok');
+
     drush_print(dt('The command to execute. You may add extra arguments.'));
     $command = drush_prompt(dt('Command'));
     while (!$this->validateCommand($command)) {
@@ -95,6 +105,23 @@ class CronCreateCommand extends CronCommandBase {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Validate the type.
+   *
+   * @param string $type
+   *
+   * @return bool
+   */
+  protected function validateType($type) {
+    switch ($type) {
+      case 'shell':
+      case 'drush':
+        return TRUE;
+    }
+
+    return FALSE;
   }
 
   /**

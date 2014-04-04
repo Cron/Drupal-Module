@@ -9,10 +9,8 @@ namespace Drupal\cron\Command;
 
 use Cron\Cron;
 use Cron\Executor\Executor;
-use Cron\Job\ShellJob;
-use Cron\Resolver\ArrayResolver;
-use Cron\Schedule\CrontabSchedule;
-use Symfony\Component\Process\PhpExecutableFinder;
+use Drupal\cron\Resolver\DrupalResolver;
+use Drupal\cron\Strategy\ShellStrategy;
 
 /**
  * Class CronRunCommand
@@ -40,7 +38,7 @@ class CronRunCommand extends CronCommandBase {
   }
 
   /**
-   * Enable the cron job.
+   * Run the cron job.
    */
   public function execute($job = NULL) {
     $force = drush_get_option('force', FALSE);
@@ -48,63 +46,43 @@ class CronRunCommand extends CronCommandBase {
     $cron = new Cron();
     $cron->setExecutor(new Executor());
 
-    if (is_null($job)) {
-      $resolver = \Drupal::service('cron_job_resolver');
-    }
-    else {
-      $resolver = $this->getJobResolver($job, $force);
-    }
+    $jobs = $this->loadJobs($job, $force);
 
+    $resolver = \Drupal::service('cron_drupal_resolver');
+    $resolver->addStrategy(new ShellStrategy());
+    $resolver->setJobs($jobs);
     $cron->setResolver($resolver);
 
     $time = microtime(true);
-    $report = $cron->run();
+    $report = $cron->run($job, $force);
 
     while ($cron->isRunning()) {}
 
-    drush_log(dt('time: !time', array('!time' => microtime(true) - $time)));
+    drush_log(dt('time: !time', array('!time' => microtime(true) - $time)), 'ok');
   }
 
   /**
-   * Get cron job resolver.
+   * Load jobs from database.
    *
-   * @param string $job_name
+   * If a single job is provided, this job is loaded from the database,
+   * otherwise all the jobs will be loaded.
+   *
+   * @param string $job
    * @param bool $force
    *
-   * @return ArrayResolver
+   * @return \Drupal\cron\Entity\CronJob[]
    */
-  public function getJobResolver($job_name, $force = FALSE) {
-    $db_job = $this->queryJob($job_name);
-
-    if (!$db_job) {
-      drush_set_error('cron', dt('The specified job does not exist.'));
+  public function loadJobs($job, $force) {
+    if (!is_null($job)) {
+      $db_job = \Drupal::service('cron_job_manager')->loadByName($job);
+      if ($db_job && ($db_job->getEnabled() || $force)) {
+        return array($db_job->getId() => $db_job);
+      }
+    }
+    else {
+      return \Drupal::service('cron_job_manager')->loadEnabledJobs();
     }
 
-    $finder = new PhpExecutableFinder();
-    $php_executable = $finder->find();
-    $resolver = new ArrayResolver();
-
-    if ($db_job->getEnabled() || $force) {
-      $job = new ShellJob();
-      $job->setCommand($php_executable . ' app/console ' . $db_job->getCommand(), dirname(DRUPAL_ROOT));
-      $job->setSchedule(new CrontabSchedule($db_job->getSchedule()));
-      $job->raw = $db_job;
-
-      $resolver->addJob($job);
-    }
-
-    return $resolver;
-  }
-
-  /**
-   * Get CronJob entity from name.
-   *
-   * @param string $name
-   *
-   * @return \Drupal\cron\Entity\CronJob
-   */
-  protected function queryJob($name) {
-    return \Drupal::service('cron_job_manager')
-      ->loadByName($name);
+    return array();
   }
 }
