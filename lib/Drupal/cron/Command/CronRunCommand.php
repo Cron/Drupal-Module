@@ -9,6 +9,8 @@ namespace Drupal\cron\Command;
 
 use Cron\Cron;
 use Cron\Executor\Executor;
+use Drupal\cron\Resolver\DrupalResolver;
+use Drupal\cron\Strategy\ShellStrategy;
 
 /**
  * Class CronRunCommand
@@ -36,25 +38,19 @@ class CronRunCommand extends CronCommandBase {
   }
 
   /**
-   * Enable the cron job.
+   * Run the cron job.
    */
   public function execute($job = NULL) {
-//    $force = drush_get_option('force', FALSE);
-    $force = FALSE;
+    $force = drush_get_option('force', FALSE);
 
     $cron = new Cron();
     $cron->setExecutor(new Executor());
 
-    $resolver = \Drupal::service('cron_shell_resolver');
-    if (!is_null($job)) {
-      $db_job = \Drupal::service('cron_job_manager')->loadByName($job);
-      if (!$db_job) {
-        drush_set_error('cron', dt('The specified job does not exist.'));
-        return;
-      }
-      $resolver->setJob($db_job);
-    }
-    $resolver->setForce($force);
+    $jobs = $this->loadJobs($job, $force);
+
+    $resolver = \Drupal::service('cron_drupal_resolver');
+    $resolver->addStrategy(new ShellStrategy());
+    $resolver->setJobs($jobs);
     $cron->setResolver($resolver);
 
     $time = microtime(true);
@@ -62,7 +58,31 @@ class CronRunCommand extends CronCommandBase {
 
     while ($cron->isRunning()) {}
 
-    dsm(t('time: !time', array('!time' => microtime(true) - $time)));
-//    drush_log(dt('time: !time', array('!time' => microtime(true) - $time)), 'ok');
+    drush_log(dt('time: !time', array('!time' => microtime(true) - $time)), 'ok');
+  }
+
+  /**
+   * Load jobs from database.
+   *
+   * If a single job is provided, this job is loaded from the database,
+   * otherwise all the jobs will be loaded.
+   *
+   * @param string $job
+   * @param bool $force
+   *
+   * @return \Drupal\cron\Entity\CronJob[]
+   */
+  public function loadJobs($job, $force) {
+    if (!is_null($job)) {
+      $db_job = \Drupal::service('cron_job_manager')->loadByName($job);
+      if ($db_job && ($db_job->getEnabled() || $force)) {
+        return array($db_job->getId() => $db_job);
+      }
+    }
+    else {
+      return \Drupal::service('cron_job_manager')->loadEnabledJobs();
+    }
+
+    return array();
   }
 }
