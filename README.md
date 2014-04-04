@@ -1,13 +1,11 @@
 Drupal Cron Module
 ==================
 
-__Cron integration for Drupal. At the moment only available for Drupal 8.__
-
-This module is still in early development phase. __It can not (and should not) be used in production environments!__
-
 This module will allow you to add, remove, enable, disable and run cron jobs on your Drupal 8 website using Drush.
 This way you can add one single cron job to the crontab of your server which will trigger the configured cron jobs
 on your Drupal site when needed.
+
+__For now, only the execution of shell jobs is supported__
 
 Installation
 ------------
