@@ -54,7 +54,7 @@ class CronRunCommand extends CronCommandBase {
     $cron->setResolver($resolver);
 
     $time = microtime(true);
-    $report = $cron->run($job, $force);
+    $report = $cron->run();
 
     while ($cron->isRunning()) {}
 
