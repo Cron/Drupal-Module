@@ -11,12 +11,32 @@
 function cron_drush_command() {
   $items = array();
 
-  \Drupal::service('cron_list_command')->configure($items);
-  \Drupal::service('cron_create_command')->configure($items);
-  \Drupal::service('cron_enable_command')->configure($items);
-  \Drupal::service('cron_disable_command')->configure($items);
-  \Drupal::service('cron_delete_command')->configure($items);
-  \Drupal::service('cron_run_command')->configure($items);
+   //These includes are needed for drush cache-rebuild support since there are no classes loaded at that point.
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronCommandBase.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronListCommand.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronCreateCommand.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronEnableCommand.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronDisableCommand.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronDeleteCommand.php';
+  require_once dirname(__FILE__) . '/../lib/Drupal/cron/Command/CronRunCommand.php';
+
+  $list_command = new Drupal\cron\Command\CronListCommand();
+  $list_command->configure($items);
+
+  $create_command = new Drupal\cron\Command\CronCreateCommand();
+  $create_command->configure($items);
+
+  $enable_command = new Drupal\cron\Command\CronEnableCommand();
+  $enable_command->configure($items);
+
+  $disable_command = new Drupal\cron\Command\CronDisableCommand();
+  $disable_command->configure($items);
+
+  $delete_command = new Drupal\cron\Command\CronDeleteCommand();
+  $delete_command->configure($items);
+
+  $run_command = new Drupal\cron\Command\CronRunCommand();
+  $run_command->configure($items);
 
   return $items;
 }
