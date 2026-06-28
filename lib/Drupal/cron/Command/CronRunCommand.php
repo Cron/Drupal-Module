@@ -32,7 +32,7 @@ class CronRunCommand extends CronCommandBase {
       ),
       'required-arguments' => FALSE,
       'options' => array(
-        'force' => 'Run the specified job, regardless the state of the cron job.',
+        'force' => 'Run the specified job, regardless of the state of the cron job.',
       ),
     );
   }
