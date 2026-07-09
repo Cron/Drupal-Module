@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains Drupal\cron\Resolver\StrategyInterface.
+ * Contains Drupal\cron\Strategy\StrategyInterface.
  */
 
 namespace Drupal\cron\Strategy;
